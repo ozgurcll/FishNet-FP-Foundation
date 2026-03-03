@@ -19,58 +19,64 @@ The architecture relies on the **"Brain and Muscles"** pattern:
 2. **`PlayerMotor.cs` (The Muscles):** Only executes physical movement (Rigidbody forces) based on the current state. Ignorant of input.
 3. **`PlayerHealth` & `PlayerEquipment`:** Server-authoritative components managing damage, death states (`ObserversRpc`), and synchronized item dropping.
 
-
-
 ## 🛠️ Tech Stack
 * **Engine:** Unity 2022.3+ (LTS recommended)
 * **Networking:** Fish-Networking (FishNet)
 * **Input:** Unity New Input System
+* **Camera:** Unity Cinemachine
 * **Language:** C#
+
+## 📦 Required Dependencies (Assets)
+To run this project without errors, you must install the following free assets and packages:
+
+* **[FishNet: Networking Evolved](https://assetstore.unity.com/packages/tools/network/fishnet-networking-evolved-207815):** The core multiplayer networking solution. (Install via Unity Asset Store).
+* **[Quick Outline](https://assetstore.unity.com/packages/tools/particles-effects/quick-outline-115488):** Used for highlighting interactable objects and items in the world. (Install via Unity Asset Store).
+* **Cinemachine:** Used for dynamic and smooth camera movements. (Install via Unity Package Manager: `Window > Package Manager > Unity Registry`).
 
 ## 🚀 Getting Started
 
-1. Clone this repository:
+* Clone this repository:
    ```bash
    git clone [https://github.com/ozgurcalli/Unity3D-Fishnet-Modular-FirstPerson-Foundation.git](https://github.com/ozgurcalli/Unity3D-Fishnet-Modular-FirstPerson-Foundation.git)
-
-
-
+   
 ## Türkçe
-   Unity3D FishNet Modüler First-Person Altyapısı
-Unity3D için FishNet ağ çözümü kullanılarak geliştirilmiş; sağlam, yüksek oranda modüler ve çok oyunculuya (multiplayer) hazır bir First-Person Controller (Birinci Şahıs Kontrolcüsü) altyapısı.
+# Unity3D FishNet Modüler First-Person Altyapısı
 
-📌 Proje Özeti
-Çoğu FPS kontrolcüsü birbirine sıkı sıkıya bağlıdır (tightly coupled) ve özellikle tek oyunculudan çok oyunculuya geçerken ölçeklendirilmesi oldukça zordur. Bu proje, Hiyerarşik Durum Makinesi (Hierarchical State Machine) kullanarak Sunucu Yetkili (Server-Authoritative) ve izole (decoupled) bir temel sunarak bu sorunu çözer. Herhangi bir çok oyunculu FPS veya etkileşim tabanlı oyun için temiz bir başlangıç noktası olacak şekilde tasarlanmıştır.
+Unity3D için **FishNet** ağ çözümü kullanılarak geliştirilmiş; sağlam, yüksek oranda modüler ve çok oyunculuya (multiplayer) hazır bir First-Person Controller (Birinci Şahıs Kontrolcüsü) altyapısı.
 
-✨ Temel Özellikler
-Modüler State Machine Mimarisi: Hareket mantığı kesin sınırlarla farklı durumlara (Idle, Move, Sprint, Jump, Air, Crouch, Dead) ayrılmıştır. Bu sayede spagetti kodların ve devasa Update() fonksiyonlarının önüne geçilir.
+## 📌 Proje Özeti
+Çoğu FPS kontrolcüsü birbirine sıkı sıkıya bağlıdır (tightly coupled) ve özellikle tek oyunculudan çok oyunculuya geçerken ölçeklendirilmesi oldukça zordur. Bu proje, **Hiyerarşik Durum Makinesi (Hierarchical State Machine)** kullanarak **Sunucu Yetkili (Server-Authoritative)** ve izole (decoupled) bir temel sunarak bu sorunu çözer. Herhangi bir çok oyunculu FPS veya etkileşim tabanlı oyun için temiz bir başlangıç noktası olacak şekilde tasarlanmıştır.
 
-Çok Oyunculuya Hazır (FishNet): Tamamen istemci-sunucu (client-server) mimarisine uygun olarak sıfırdan inşa edilmiştir. Girdiler (input) yerel olarak toplanır, durum değişiklikleri doğrulanır ve fizik/sağlık işlemleri sunucu yetkisiyle (authoritatively) yönetilir.
+## ✨ Temel Özellikler
 
-Güvenli Ağ Yaşam Döngüsü Yönetimi: Ağ üzerinde doğma (spawn) sırasında oluşabilecek bellek sızıntılarını ve yetki senkronizasyonu hatalarını önlemek için, event abonelikleri ve girdiler güvenli bir şekilde bağlanmıştır.
+* **Modüler State Machine Mimarisi:** Hareket mantığı kesin sınırlarla farklı durumlara (`Idle`, `Move`, `Sprint`, `Jump`, `Air`, `Crouch`, `Dead`) ayrılmıştır. Bu sayede spagetti kodların ve devasa `Update()` fonksiyonlarının önüne geçilir.
+* **Çok Oyunculuya Hazır (FishNet):** Tamamen istemci-sunucu (client-server) mimarisine uygun olarak sıfırdan inşa edilmiştir. Girdiler (input) yerel olarak toplanır, durum değişiklikleri doğrulanır ve fizik/sağlık işlemleri sunucu yetkisiyle (authoritatively) yönetilir.
+* **Güvenli Ağ Yaşam Döngüsü Yönetimi:** Ağ üzerinde doğma (spawn) sırasında oluşabilecek bellek sızıntılarını ve yetki senkronizasyonu hatalarını önlemek için, event abonelikleri ve girdiler güvenli bir şekilde bağlanmıştır.
+* **Event Odaklı Arayüz ve Sistemler:** Sağlık, dayanıklılık (stamina) ve envanter değişiklikleri C# `Action`'ları aracılığıyla yayınlanır. Bu sayede temel oyun mantığı, arayüzden (UI) tamamen izole edilir.
 
-Event Odaklı Arayüz ve Sistemler: Sağlık, dayanıklılık (stamina) ve envanter değişiklikleri C# Action'ları aracılığıyla yayınlanır. Bu sayede temel oyun mantığı, arayüzden (UI) tamamen izole edilir.
+## 🏗️ Mimari ve Temel Bileşenler
 
-🏗️ Mimari ve Temel Bileşenler
-Sistem mimarisi "Beyin ve Kaslar" modeline dayanır:
+Sistem mimarisi **"Beyin ve Kaslar"** modeline dayanır:
+1. **`Player.cs` (Beyin):** Ağ sahipliğini, girdileri (Unity New Input System) ve State Machine (Durum Makinesi) geçişlerini yönetir.
+2. **`PlayerMotor.cs` (Kaslar):** Sadece mevcut duruma (state) bağlı olarak fiziksel hareketi (Rigidbody kuvvetleri) uygular. Girdilerden (input) habersizdir.
+3. **`PlayerHealth` & `PlayerEquipment`:** Hasar, ölüm durumları (`ObserversRpc`) ve senkronize eşya fırlatma işlemlerini yöneten sunucu yetkili (server-authoritative) bileşenler.
 
-Player.cs (Beyin): Ağ sahipliğini, girdileri (Unity New Input System) ve State Machine (Durum Makinesi) geçişlerini yönetir.
+## 🛠️ Kullanılan Teknolojiler
+* **Oyun Motoru:** Unity 2022.3+ (LTS önerilir)
+* **Ağ Altyapısı:** Fish-Networking (FishNet)
+* **Girdi Sistemi:** Unity New Input System
+* **Kamera:** Unity Cinemachine
+* **Dil:** C#
 
-PlayerMotor.cs (Kaslar): Sadece mevcut duruma (state) bağlı olarak fiziksel hareketi (Rigidbody kuvvetleri) uygular. Girdilerden (input) habersizdir.
+## 📦 Gerekli Bağımlılıklar (Assetler)
+Bu projenin hatasız çalışabilmesi için aşağıdaki ücretsiz assetleri ve paketleri Unity'ye kurmanız gerekmektedir:
 
-PlayerHealth & PlayerEquipment: Hasar, ölüm durumları (ObserversRpc) ve senkronize eşya fırlatma işlemlerini yöneten sunucu yetkili (server-authoritative) bileşenler.
+* **[FishNet: Networking Evolved](https://assetstore.unity.com/packages/tools/network/fishnet-networking-evolved-207815):** Temel çok oyunculu ağ çözümü. (Unity Asset Store üzerinden kurulur).
+* **[Quick Outline](https://assetstore.unity.com/packages/tools/particles-effects/quick-outline-115488):** Dünyadaki etkileşimli eşyaları ve objeleri vurgulamak (outline) için kullanılır. (Unity Asset Store üzerinden kurulur).
+* **Cinemachine:** Dinamik ve akıcı kamera hareketleri için kullanılır. (Unity Package Manager üzerinden kurulur: `Window > Package Manager > Unity Registry`).
 
-🛠️ Kullanılan Teknolojiler
-Oyun Motoru: Unity 2022.3+ (LTS önerilir)
+## 🚀 Başlangıç
 
-Ağ Altyapısı: Fish-Networking (FishNet)
-
-Girdi Sistemi: Unity New Input System
-
-Dil: C#
-
-🚀 Başlangıç
-Bu repoyu bilgisayarınıza klonlayın:
-
-Bash
-git clone https://github.com/ozgurcalli/Unity3D-Fishnet-Modular-FirstPerson-Foundation.git
+1. Bu repoyu bilgisayarınıza klonlayın:
+   ```bash
+   git clone [https://github.com/ozgurcalli/Unity3D-Fishnet-Modular-FirstPerson-Foundation.git](https://github.com/ozgurcalli/Unity3D-Fishnet-Modular-FirstPerson-Foundation.git)
